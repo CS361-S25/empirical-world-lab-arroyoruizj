@@ -15,10 +15,13 @@ class OrgWorld : public emp::World<Organism> {
     public:
 
     OrgWorld(emp::Random &_random) : emp::World<Organism>(_random), random(_random) {
+
         random_ptr.New(_random);
+
     }
 
     ~OrgWorld() {
+
     }
 
   void Update() {
@@ -42,6 +45,8 @@ class OrgWorld : public emp::World<Organism> {
             // Call the Process method of the organism
             organism->Process(100);
 
+            MoveOrganism(i);
+
         }
 
     // d. Create another schedule for checking reproduction after everyone has received points
@@ -60,6 +65,46 @@ class OrgWorld : public emp::World<Organism> {
                     DoBirth(*offspring, i); // Add the offspring to the population
                 
                 }
+            }
+        }
+    }
+
+    emp::Ptr<Organism> ExtractOrganism(size_t location) {
+
+        if (!IsOccupied(location)) {
+            return nullptr; // Or handle this case as appropriate
+        }
+
+        emp::Ptr<Organism> organism = pop[location];
+        pop[location] = nullptr;
+        return organism;
+    }
+
+    void MoveOrganism(size_t old_location) {
+
+        if (!IsOccupied(old_location)) {
+
+            return;
+
+        }
+
+        emp::Ptr<Organism> organism = ExtractOrganism(old_location);
+
+        if (organism) {
+
+            emp::WorldPosition new_location = GetRandomNeighborPos(old_location);
+            // Only move if the new location is not occupied
+            if (!IsOccupied(new_location)) {
+
+                AddOrgAt(organism, new_location);
+
+            } 
+
+            else {
+                // If the new location is occupied, you might want to handle this
+                // differently, e.g., put the organism back in its original spot
+                AddOrgAt(organism, old_location);
+
             }
         }
     }

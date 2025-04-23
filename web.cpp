@@ -28,8 +28,10 @@ class AEAnimator : public emp::web::Animate {
         doc << GetToggleButton("Toggle");
         doc << GetStepButton("Step");
 
-        Organism* new_org = new Organism(&random, 1.2);
-        world.Inject(*new_org);
+        Organism* spec1_org = new Organism(&random, 1.2, 1);
+        Organism* spec2_org = new Organism(&random, 1.2, 2);
+        world.Inject(*spec1_org);
+        world.Inject(*spec2_org);
         world.Resize(num_h_boxes, num_w_boxes);
         world.SetPopStruct_Grid(num_w_boxes, num_h_boxes);
 
@@ -48,13 +50,29 @@ class AEAnimator : public emp::web::Animate {
         canvas.Clear();
 
         int org_num = 0;
+
         for (int x = 0; x < num_w_boxes; x++){
+
             for (int y = 0; y < num_h_boxes; y++) {
+
                 if (world.IsOccupied(org_num)) {
-                    canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "black", "black");
+
+                    if (world.GetOrg(org_num).GetSpecies() == 1) {
+
+                        canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "black", "black");
+
+                    } else {
+
+                        canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "red", "black");
+                    }
+
+                    
+
                 } else {
+
                     canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "white", "black");
                 }
+
                 org_num++;
             }
         }
